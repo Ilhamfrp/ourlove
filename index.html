@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Love Story Moments</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navigation Menu -->
+    <nav>
+        <ul>
+            <li><a href="#" id="homeTab">Home</a></li>
+            <li><a href="#" id="momentsTab">Moments</a></li>
+            <li><a href="#" id="connectingTab">Connecting</a></li>
+        </ul>
+        <div class="settings">
+            <img src="settings-icon.svg" alt="Settings" id="settingsIcon">
+            <div id="settingsMenu" class="settings-menu" style="display: none;">
+                <ul>
+                    <li><a href="#" id="accountOption">Akun</a></li>
+                    <li><a href="#" id="helpOption">Help</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sign Up Section -->
+    <div id="signupContainer" class="login-container" style="display: none;">
+        <div class="login-box">
+            <h2>Sign Up</h2>
+            <form id="signupForm">
+                <input type="text" id="signupUsername" placeholder="Username" required>
+                <input type="password" id="signupPassword" placeholder="Password" required>
+                <input type="date" id="signupBirthday" required>
+                <button type="submit">Sign Up</button>
+            </form>
+            <p id="signupMessage"></p>
+            <button id="backToLogin">Back to Login</button>
+        </div>
+    </div>
+
+    <!-- Login Section -->
+    <div id="loginContainer" class="login-container">
+        <div class="login-box">
+            <h2>Login</h2>
+            <form id="loginForm">
+                <input type="text" id="username" placeholder="Username" required>
+                <input type="password" id="password" placeholder="Password" required>
+                <button type="submit">Login</button>
+            </form>
+            <p id="errorMessage"></p>
+            <button id="showSignup">Sign Up</button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div id="mainContainer" class="main-container" style="display: none;">
+        <!-- Home Section -->
+        <div id="homeSection" class="section">
+            <h2>Relationship Status</h2>
+            <p>Your current relationship status: <span id="relationshipStatus">Pacaran</span></p>
+            <select id="statusSelect">
+                <option value="Pacaran">Pacaran</option>
+                <option value="Tunangan">Tunangan</option>
+                <option value="Menikah">Menikah</option>
+                <option value="HTS">HTS</option>
+            </select>
+            <button id="updateStatusButton">Update Status</button>
+        </div>
+
+        <!-- Moments Section -->
+        <div id="momentsSection" class="section" style="display: none;">
+            <h2>Upload Your Special Moments</h2>
+            <p>Your relationship started on: <span id="relationshipStartDateDisplay"></span></p>
+            <form id="mediaForm">
+                <input type="file" id="photoInput" accept="image/*">
+                <input type="file" id="videoInput" accept="video/*">
+                <button type="submit">Upload</button>
+            </form>
+
+            <!-- Gallery Section -->
+            <div id="gallery" class="gallery"></div>
+        </div>
+
+        <!-- Connecting Section -->
+        <div id="connectingSection" class="section" style="display: none;">
+            <h2>Start a Private Video Call</h2>
+            <button id="startVideoCall">Start Video Call</button>
+            <p>Invite your partner to join the call with this link:</p>
+            <input type="text" id="videoCallLink" value="https://meet.jit.si/YourLoveStoryVideoCall" readonly>
+            <button id="copyLinkButton">Copy Link</button>
+        </div>
+    </div>
+
+    <!-- Account Modal (for setting relationship start date) -->
+    <div id="accountModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h3>Account Information</h3>
+            <p>Username: <span id="accountUsername"></span></p>
+            <p>Relationship Started on: <input type="date" id="accountStartDate"></p>
+            <button id="saveAccountInfo">Save</button>
+            <button id="closeAccountModal">Close</button>
+        </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div id="helpModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h3>Help & Support</h3>
+            <p>If you encounter any issues or bugs, please contact us or report the issue.</p>
+            <textarea id="helpMessage" placeholder="Describe your issue..."></textarea>
+            <button id="submitHelp">Submit Report</button>
+            <button id="closeHelpModal">Close</button>
+        </div>
+    </div>
+
+    <script>
+        // Simple user data storage using localStorage
+        let users = JSON.parse(localStorage.getItem('users')) || [];
+
+        // Elements for login and signup
+        const signupForm = document.getElementById('signupForm');
+        const signupContainer = document.getElementById('signupContainer');
+        const signupMessage = document.getElementById('signupMessage');
+        const loginContainer = document.getElementById('loginContainer');
+        const loginForm = document.getElementById('loginForm');
+        const mainContainer = document.getElementById('mainContainer');
+        const errorMessage = document.getElementById('errorMessage');
+        const relationshipStartDateDisplay = document.getElementById('relationshipStartDateDisplay');
+        const showSignupButton = document.getElementById('showSignup');
+        const backToLoginButton = document.getElementById('backToLogin');
+        const homeTab = document.getElementById('homeTab');
+        const momentsTab = document.getElementById('momentsTab');
+        const connectingTab = document.getElementById('connectingTab');
+        const settingsIcon = document.getElementById('settingsIcon');
+        const settingsMenu = document.getElementById('settingsMenu');
+        const accountOption = document.getElementById('accountOption');
+        const helpOption = document.getElementById('helpOption');
+        const accountModal = document.getElementById('accountModal');
+        const accountUsername = document.getElementById('accountUsername');
+        const accountStartDate = document.getElementById('accountStartDate');
+        const saveAccountInfo = document.getElementById('saveAccountInfo');
+        const closeAccountModal = document.getElementById('closeAccountModal');
+        const helpModal = document.getElementById('helpModal');
+        const closeHelpModal = document.getElementById('closeHelpModal');
+        const updateStatusButton = document.getElementById('updateStatusButton');
+        const statusSelect = document.getElementById('statusSelect');
+        const relationshipStatus = document.getElementById('relationshipStatus');
+
+        let currentUser = null;
+
+        // Handle Sign Up and Login Toggle
+        showSignupButton.addEventListener('click', function () {
+            loginContainer.style.display = 'none';
+            signupContainer.style.display = 'flex';
+        });
+
+        backToLoginButton.addEventListener('click', function () {
+            signupContainer.style.display = 'none';
+            loginContainer.style.display = 'flex';
+        });
+
+        // Handle sign up functionality
+        signupForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const username = document.getElementById('signupUsername').value;
+            const password = document.getElementById('signupPassword').value;
+            const birthday = document.getElementById('signupBirthday').value;
+
+            // Save user data to localStorage
+            users.push({ username, password, birthday, relationshipStartDate: null, loggedIn: false });
+            localStorage.setItem('users', JSON.stringify(users));
+
+            signupMessage.textContent = 'Sign up successful! Please log in.';
+            setTimeout(() => {
+                signupContainer.style.display = 'none';
+                loginContainer.style.display = 'flex';
+                signupMessage.textContent = '';  // Clear message
+            }, 2000);
+        });
+
+        // Handle login functionality
+        loginForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            currentUser = users.find(u => u.username === username && u.password === password);
+
+            if (currentUser) {
+                currentUser.loggedIn = true;
+                localStorage.setItem('users', JSON.stringify(users)); // Save to localStorage
+                loginContainer.style.display = 'none';
+                mainContainer.style.display = 'block';
+                relationshipStartDateDisplay.textContent = currentUser.relationshipStartDate || 'Not set';
+                accountUsername.textContent = currentUser.username;
+            } else {
+                errorMessage.textContent = 'Incorrect username or password!';
+            }
+        });
+
+        // Handle Update Status functionality in Home
+        updateStatusButton.addEventListener('click', function () {
+            const newStatus = statusSelect.value;
+            relationshipStatus.textContent = newStatus;
+            currentUser.status = newStatus;
+            localStorage.setItem('users', JSON.stringify(users)); // Save updated status to localStorage
+        });
+
+        // Handle Settings Menu Functionality
+        settingsIcon.addEventListener('click', function () {
+            settingsMenu.style.display = settingsMenu.style.display === 'none' ? 'block' : 'none';
+        });
+
+        // Open Account Modal
+        accountOption.addEventListener('click', function () {
+            settingsMenu.style.display = 'none';
+            accountModal.style.display = 'block';
+            accountStartDate.value = currentUser.relationshipStartDate || '';
+        });
+
+        // Save Account Information (Relationship Start Date)
+        saveAccountInfo.addEventListener('click', function () {
+            currentUser.relationshipStartDate = accountStartDate.value;
+            relationshipStartDateDisplay.textContent = currentUser.relationshipStartDate;
+            localStorage.setItem('users', JSON.stringify(users)); // Save updated info
+            accountModal.style.display = 'none';
+        });
+
+        // Close Account Modal
+        closeAccountModal.addEventListener('click', function () {
+            accountModal.style.display = 'none';
+        });
+
+        // Open Help Modal
+        helpOption.addEventListener('click', function () {
+            settingsMenu.style.display = 'none';
+            helpModal.style.display = 'block';
+        });
+
+        // Close Help Modal
+        closeHelpModal.addEventListener('click', function () {
+            helpModal.style.display = 'none';
+        });
+
+        // Navigation Menu Functionality
+        homeTab.addEventListener('click', function () {
+            showSection('home');
+        });
+
+        momentsTab.addEventListener('click', function () {
+            showSection('moments');
+        });
+
+        connectingTab.addEventListener('click', function () {
+            showSection('connecting');
+        });
+
+        function showSection(section) {
+            document.getElementById('homeSection').style.display = 'none';
+            document.getElementById('momentsSection').style.display = 'none';
+            document.getElementById('connectingSection').style.display = 'none';
+
+            if (section === 'home') document.getElementById('homeSection').style.display = 'block';
+            if (section === 'moments') document.getElementById('momentsSection').style.display = 'block';
+            if (section === 'connecting') document.getElementById('connectingSection').style.display = 'block';
+        }
+
+        // Close modals when clicking outside of them
+        window.onclick = function(event) {
+            if (event.target == accountModal) {
+                accountModal.style.display = 'none';
+            } else if (event.target == helpModal) {
+                helpModal.style.display = 'none';
+            }
+        };
+
+        // Handle Start Video Call button click
+        const startVideoCallButton = document.getElementById('startVideoCall');
+        const videoCallLink = document.getElementById('videoCallLink').value; // Jitsi Meet link
+
+        startVideoCallButton.addEventListener('click', function () {
+            // Open the video call link in a new tab
+            window.open(videoCallLink, '_blank');
+        });
+
+        // Handle Copy Link button click
+        const copyLinkButton = document.getElementById('copyLinkButton');
+
+        copyLinkButton.addEventListener('click', function () {
+            const videoLink = document.getElementById('videoCallLink');
+            videoLink.select();
+            videoLink.setSelectionRange(0, 99999); // For mobile devices
+
+            // Copy the text inside the text field
+            document.execCommand('copy');
+
+            // Alert the copied text (optional)
+            alert('Copied the link: ' + videoLink.value);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,230 @@
+/* General styles */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #ffe6f0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+h2, p {
+    text-align: center;
+    color: #ff66b3;
+}
+
+button {
+    background-color: #ff66b3;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: block;
+    margin: 10px auto;
+}
+
+button:hover {
+    background-color: #ff99cc;
+}
+
+/* Login & Signup styles */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100%;
+}
+
+.login-box {
+    background-color: white;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 300px;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="date"] {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    border: 1px solid #ff66b3;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+/* Navigation styles */
+nav {
+    background-color: #ff99cc;
+    padding: 10px 0;
+    text-align: center;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: inline-block;
+}
+
+nav ul li {
+    display: inline;
+    margin-right: 15px;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: white;
+    font-size: 18px;
+    padding: 10px 20px;
+    border-radius: 5px;
+}
+
+nav ul li a:hover {
+    background-color: #ff66b3;
+}
+
+/* Settings Icon and Menu */
+.settings {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+}
+
+.settings img {
+    width: 30px;
+    cursor: pointer;
+}
+
+.settings-menu {
+    position: absolute;
+    right: 0;
+    background-color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    border-radius: 5px;
+    display: none;
+}
+
+.settings-menu ul {
+    list-style: none;
+    padding: 0;
+}
+
+.settings-menu ul li {
+    margin-bottom: 10px;
+}
+
+.settings-menu ul li a {
+    text-decoration: none;
+    color: #ff66b3;
+}
+
+/* Content sections */
+.section {
+    padding: 20px;
+    margin-top: 60px;  /* To avoid overlapping with the fixed navigation */
+    flex: 1;
+}
+
+/* Modal styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1;
+}
+
+.modal-content {
+    background-color: white;
+    margin: 15% auto;
+    padding: 20px;
+    border-radius: 10px;
+    width: 300px;
+    text-align: center;
+}
+
+/* Responsive Design: Media Query for Mobile Devices */
+@media screen and (max-width: 768px) {
+    nav ul {
+        flex-direction: column;  /* Ubah dari horizontal ke vertikal di layar kecil */
+    }
+
+    nav ul li {
+        margin: 10px 0;
+    }
+
+    nav ul li a {
+        font-size: 18px;
+        padding: 15px;
+    }
+
+    .settings {
+        position: static; /* Buat static untuk layar kecil */
+        margin-top: 10px;
+    }
+
+    /* Adjust login and signup container */
+    .login-container {
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+    }
+
+    .login-box {
+        width: 90%; /* Perbesar kotak login */
+        padding: 20px;
+    }
+
+    .login-box input[type="text"], 
+    .login-box input[type="password"], 
+    .login-box input[type="date"] {
+        width: 100%;
+        padding: 15px;
+        font-size: 16px;
+    }
+
+    /* Adjust for main container */
+    .main-container {
+        padding: 20px;
+    }
+
+    .section {
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+
+    .gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: 10px;
+    }
+
+    /* Adjusting modal for mobile */
+    .modal-content {
+        width: 90%;
+        padding: 15px;
+    }
+
+    /* Adjust buttons */
+    button {
+        padding: 10px 20px;
+        font-size: 16px;
+        width: 100%;
+    }
+}
